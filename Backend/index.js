@@ -1,35 +1,46 @@
-const express = require("express")
+const express = require("express");
 const { Server } = require("socket.io");
-var http = require('http');
-const cors = require("cors")
+const http = require("http");
+const path = require("path");
+const cors = require("cors");
 
-const app = express()
-app.use(cors())
+const app = express();
+app.use(cors());
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*", // सभी ओरिजिन को अलाऊ करने के लिए
     methods: ["GET", "POST"]
   }
 });
 
-app.get("/", (req, res) => {res.send("Chat BE with Socket.io by Prince Raj"); res.end()})
+// ✅✅ React Build के सही Path को सेट करें ✅✅
+const frontendPath = path.join(__dirname, "../frontend/build"); // ".." बैकएंड के बाहर जाने के लिए
 
-io.on("connection", (socket) => {
-  console.log(socket.id)
+app.use(express.static(frontendPath));
 
-  socket.on("joinRoom", room => {
-		socket.join(room)
-  })
-
-  socket.on("newMessage", ({newMessage, room}) => {
-    io.in(room).emit("getLatestMessage", newMessage)
-  })
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-const port = process.env.PORT || 9000
+io.on("connection", (socket) => {
+  console.log("User Connected: ", socket.id);
 
-server.listen(port, console.log(`App started at port ${port}`))
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+  });
+
+  socket.on("newMessage", ({ newMessage, room }) => {
+    io.in(room).emit("getLatestMessage", newMessage);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected: ", socket.id);
+  });
+});
+
+const port = process.env.PORT || 9000;
+
+server.listen(port, () => console.log(`Server running on port ${port}`));
