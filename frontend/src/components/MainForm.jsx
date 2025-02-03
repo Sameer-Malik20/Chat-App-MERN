@@ -1,11 +1,26 @@
-import  {useState} from 'react'
+
 import {useNavigate} from 'react-router-dom'
+import { useState, useEffect } from "react";
 
 
 const MainForm = () => {
     const [data,setData] = useState({name: "", room:""})
     const [error,setError] = useState("")
     const navigate = useNavigate()
+
+    useEffect(() => {
+        // Check if the user is logged in by checking for token in localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");  // If no token, redirect to login page
+        }
+      }, [navigate]);  useEffect(() => {
+        // Check if the user is logged in by checking for token in localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");  // If no token, redirect to login page
+        }
+      }, [navigate]);
 
     const handleChange = (e) => {
         console.log(e.target.name,e.target.value);

@@ -3,21 +3,32 @@ const { Server } = require("socket.io");
 const http = require("http");
 const path = require("path");
 const cors = require("cors");
+const router = require("./routes/Auth");
+const mongoose = require("mongoose")
 
 const app = express();
 app.use(cors());
+app.use(express.json())
+
+mongoose.connect("mongodb://localhost:27017/blog", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("Error connecting to MongoDB", err));
+
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // सभी ओरिजिन को अलाऊ करने के लिए
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
 
-// ✅✅ React Build के सही Path को सेट करें ✅✅
-const frontendPath = path.join(__dirname, "../frontend/build"); // ".." बैकएंड के बाहर जाने के लिए
+
+const frontendPath = path.join(__dirname, "../frontend/build"); 
 
 app.use(express.static(frontendPath));
 
@@ -40,6 +51,9 @@ io.on("connection", (socket) => {
     console.log("User Disconnected: ", socket.id);
   });
 });
+
+app.use("/api/auth",router)
+
 
 const port = process.env.PORT || 9000;
 
