@@ -75,3 +75,4 @@ Feel free to fork this repository and make improvements. Pull requests are welco
 
 ## 📬 Contact
 For any queries, reach out to me at **sameermalik63901@gmail.com
+live link : https://bright-moxie-e075f9.netlify.app
