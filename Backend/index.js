@@ -8,7 +8,7 @@ const mongoose = require("mongoose")
 
 const app = express();
 app.use(cors());
-app.use(cors({ origin: "https://moonlit-hummingbird-118b4b.netlify.app", credentials: true }));
+app.use(cors({ origin: "https://bright-moxie-e075f9.netlify.app", credentials: true }));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
